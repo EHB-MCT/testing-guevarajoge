@@ -1,55 +1,50 @@
-const express = require('express')
+const express = require('express');
 const bodyParser = require('body-parser');
 const http = require('http');
-const Helpers = require('./utils/helpers.js')
+const Helpers = require('./utils/helpers.js');
 
-const port = 3000
-
+const port = 3000;
 
 const pg = require('knex')({
   client: 'pg',
-  version: '9.6',      
+  version: '9.6',
   searchPath: ['knex', 'public'],
-  connection: process.env.PG_CONNECTION_STRING ? process.env.PG_CONNECTION_STRING : 'postgres://example:example@localhost:5432/test'
+  connection: process.env.PG_CONNECTION_STRING
+    ? process.env.PG_CONNECTION_STRING
+    : 'postgres://example:example@localhost:5432/test',
 });
 
-
 const app = express();
-http.Server(app); 
-
+http.Server(app);
 
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
     // to support URL-encoded bodies
-    extended: true
+    extended: true,
   })
-);  
+);
 
 app.get('/test', (req, res) => {
-
   res.status(200).send();
-})
+});
 
 app.get('/', async (req, res) => {
-  const result = await pg
-    .select(['uuid', 'title', 'created_at'])
-    .from('story')
+  const result = await pg.select(['uuid', 'title', 'created_at']).from('story');
   res.json({
-      res: result
-  })
-})
+    res: result,
+  });
+});
 
 app.get('/story/:uuid', async (req, res) => {
   const result = await pg
     .select(['uuid', 'title', 'created_at'])
     .from('story')
-    .where({uuid: req.params.uuid})
+    .where({ uuid: req.params.uuid });
   res.json({
-      res: result
-  })
-})
-
+    res: result,
+  });
+});
 
 async function initialiseTables() {
   await pg.schema.hasTable('storyblock').then(async (exists) => {
@@ -66,7 +61,6 @@ async function initialiseTables() {
         .then(async () => {
           console.log('created table storyblock');
         });
-
     }
   });
   await pg.schema.hasTable('story').then(async (exists) => {
@@ -83,13 +77,14 @@ async function initialiseTables() {
           console.log('created table story');
           for (let i = 0; i < 10; i++) {
             const uuid = Helpers.generateUUID();
-            await pg.table('story').insert({ uuid, title: `random element number ${i}` })
+            await pg
+              .table('story')
+              .insert({ uuid, title: `random element number ${i}` });
           }
         });
-        
     }
   });
 }
-initialiseTables()
+initialiseTables();
 
 module.exports = app;
