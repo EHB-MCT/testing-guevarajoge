@@ -26,7 +26,7 @@ app.use(
 );
 
 app.get('/test', (req, res) => {
-  res.status(200).send();
+  res.status(204).send();
 });
 
 app.get('/', async (req, res) => {
@@ -36,6 +36,17 @@ app.get('/', async (req, res) => {
   });
 });
 
+//GET all records from storyblock table
+app.get('/storyblock', async (req, res) => {
+  const result = await pg
+    .select(['uuid', 'content', 'created_at'])
+    .from('storyblock');
+  res.json({
+    res: result,
+  });
+});
+
+//
 app.get('/story/:uuid', async (req, res) => {
   const result = await pg
     .select(['uuid', 'title', 'created_at'])
@@ -61,6 +72,12 @@ async function initialiseTables() {
         .then(async () => {
           console.log('created table storyblock');
         });
+    }
+    // add record to storyblock table
+    else {
+      // console.log('created table STORYBLOCK');
+      const uuid = Helpers.generateUUID();
+      await pg.table('storyblock').insert({ uuid, content: `add record` });
     }
   });
   await pg.schema.hasTable('story').then(async (exists) => {

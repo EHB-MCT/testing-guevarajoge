@@ -5,8 +5,13 @@ const request = supertest(app);
 describe('GET /test end point', () => {
   test('check respond with 201', async (done) => {
     try {
-      const response = await request.get('/test');
-      expect(response.status).toBe(200, done());
+      await request
+        .get('/test')
+        .expect(204)
+        .then((res) => {
+          expect(res.body).toStrictEqual({});
+          done();
+        });
     } catch (e) {
       if (e) {
         console.log(e);

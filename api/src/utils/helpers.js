@@ -10,7 +10,7 @@ const Helpers = {
   //in: parameter "title"
   // out is string (alles goed), of false (fouten)
   checkingTitle: (a) => {
-    if (a.length < 50 && typeof a === 'string') {
+    if (a.length < 100 && typeof a === 'string') {
       return a;
     } else {
       false;
