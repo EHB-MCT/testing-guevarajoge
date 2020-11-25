@@ -26,7 +26,17 @@ app.use(
 );
 
 app.get('/test', (req, res) => {
+  if (Object.keys(req.query).length > 0) {
+    res.sendStatus(400);
+  }
   res.status(204).send();
+});
+
+app.post('/test', (req, res) => {
+  if (Object.keys(req.query).length > 0) {
+    res.sendStatus(201);
+  }
+  res.status(400).send();
 });
 
 app.get('/', async (req, res) => {
