@@ -12,7 +12,7 @@ describe('check GET /storyblock ', () => {
         .get('/storyblock')
         .expect(200)
         .then((res) => {
-          console.log(res.body.res[0]);
+          // console.log(res.body.res[0]);
         });
       done();
     } catch (error) {
@@ -44,15 +44,15 @@ describe('check GET /storyblock ', () => {
 });
 
 describe('POST/ test storyblock table', () => {
-  // test('if user adds record with body', async (done) => {
-  //   try {
-  //     await request
-  //       .post('/storyblock')
-  //       .send({ content: 'NEW Test ', story_id: 2 })
-  //       .expect(200);
-  //     done();
-  //   } catch (error) {}
-  // });
+  test('if user adds record with body', async (done) => {
+    try {
+      await request
+        .post('/storyblock')
+        .send({ content: 'NEW Test ', story_id: 2 })
+        .expect(200);
+      done();
+    } catch (error) {}
+  });
   test('respond with 400 if no object is sent', async (done) => {
     try {
       const storyblockPost = await request.post('/storyblock');
