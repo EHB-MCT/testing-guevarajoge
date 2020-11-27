@@ -1,18 +1,62 @@
 const supertest = require('supertest');
+const http = require('http');
+
 const app = require('./../server.js');
 const request = supertest(app);
 const Helpers = require('../utils/helpers');
 
-describe('test storyblock table', () => {
-  test('user adds record', async (done) => {
+describe('check GET /storyblock ', () => {
+  test('check that GET /storyblock exist ', async (done) => {
     try {
       await request
-        .post('/storyblock')
-        .send({ content: 'NEW Test ', story_id: 2 })
+        .get('/storyblock')
         .expect(200)
         .then((res) => {
-          done();
+          console.log(res.body.res[0]);
         });
+      done();
+    } catch (error) {
+      console.log(error);
+    }
+  });
+  test('check that GET/storyblock return all results & that all columns are defined ', async (done) => {
+    try {
+      const waitRequest = await request.get('/storyblock');
+      expect(waitRequest.body).not.toBeNull();
+      expect(waitRequest.body.res[0]['uuid']).toBeDefined();
+      expect(waitRequest.body.res[0]['content']).toBeDefined();
+      expect(waitRequest.body.res[0]['story_id']).toBeDefined();
+      expect(waitRequest.body.res[0]['created_at']).toBeDefined();
+      done();
+    } catch (error) {
+      console.log(error);
+    }
+  });
+  test('check that GET/storyblock  "noexisting"  column is false  ', async (done) => {
+    try {
+      const waitRequest = await request.get('/storyblock');
+      expect(waitRequest.body.res[0]['noexisting']).toBeFalsy();
+      done();
+    } catch (error) {
+      console.log(error);
+    }
+  });
+});
+
+describe('POST/ test storyblock table', () => {
+  // test('if user adds record with body', async (done) => {
+  //   try {
+  //     await request
+  //       .post('/storyblock')
+  //       .send({ content: 'NEW Test ', story_id: 2 })
+  //       .expect(200);
+  //     done();
+  //   } catch (error) {}
+  // });
+  test('respond with 400 if no object is sent', async (done) => {
+    try {
+      const storyblockPost = await request.post('/storyblock');
+      expect(storyblockPost.status).toBe(400);
       done();
     } catch (error) {}
   });

@@ -52,17 +52,21 @@ app.get('/storyblock', async (req, res) => {
 });
 
 app.post('/storyblock', async (req, res) => {
-  const uuid = Helpers.generateUUID();
+  if (Object.keys(req.body).length > 0) {
+    const uuid = Helpers.generateUUID();
 
-  const result = await pg
-    .insert({ ...req.body, uuid: uuid })
-    .table('storyblock')
-    .returning('*')
-    .then((res) => {
-      return res;
-    });
-  console.log(result);
-  res.send(result);
+    const result = await pg
+      .insert({ ...req.body, uuid: uuid })
+      .table('storyblock')
+      .returning('*')
+      .then((res) => {
+        return res;
+      });
+    // console.log(result);
+    res.send(result);
+  } else {
+    res.status(400).send();
+  }
 });
 
 app.get('/', async (req, res) => {
