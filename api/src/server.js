@@ -33,17 +33,12 @@ app.get('/test', (req, res) => {
 });
 
 app.post('/test', (req, res) => {
-  if (Object.keys(req.query).length > 0) {
+  if (Object.keys(req.body).length > 0) {
+    // console.log('server test');
+    // console.log(req.body);
     res.sendStatus(201);
   }
   res.status(400).send();
-});
-
-app.get('/', async (req, res) => {
-  const result = await pg.select(['uuid', 'title', 'created_at']).from('story');
-  res.json({
-    res: result,
-  });
 });
 
 //GET all records from storyblock table
@@ -56,7 +51,41 @@ app.get('/storyblock', async (req, res) => {
   });
 });
 
-//
+app.post('/storyblock', async (req, res) => {
+  const uuid = Helpers.generateUUID();
+
+  const result = await pg
+    .insert({ ...req.body, uuid: uuid })
+    .table('storyblock')
+    .returning('*')
+    .then((res) => {
+      return res;
+    });
+  console.log(result);
+  res.send(result);
+});
+
+app.get('/', async (req, res) => {
+  const result = await pg.select(['uuid', 'title', 'created_at']).from('story');
+  res.json({
+    res: result,
+  });
+});
+
+app.post('/story', async (req, res) => {
+  const uuid = Helpers.generateUUID();
+
+  const result = await pg
+    .insert({ ...req.body, uuid: uuid })
+    .table('story')
+    .returning('*')
+    .then((res) => {
+      return res;
+    });
+  console.log(result);
+  res.send(result);
+});
+
 app.get('/story/:uuid', async (req, res) => {
   const result = await pg
     .select(['uuid', 'title', 'created_at'])
@@ -86,8 +115,8 @@ async function initialiseTables() {
     // add record to storyblock table
     else {
       // console.log('created table STORYBLOCK');
-      const uuid = Helpers.generateUUID();
-      await pg.table('storyblock').insert({ uuid, content: `add record` });
+      // const uuid = Helpers.generateUUID();
+      // await pg.table('storyblock').insert({ uuid, content: `add record` });
     }
   });
   await pg.schema.hasTable('story').then(async (exists) => {
