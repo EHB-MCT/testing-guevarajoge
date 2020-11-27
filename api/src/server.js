@@ -44,7 +44,7 @@ app.post('/test', (req, res) => {
 //GET all records from storyblock table
 app.get('/storyblock', async (req, res) => {
   const result = await pg
-    .select(['uuid', 'content', 'created_at'])
+    .select(['uuid', 'content', 'story_id', 'created_at'])
     .from('storyblock');
   res.json({
     res: result,
@@ -82,7 +82,7 @@ app.post('/story', async (req, res) => {
     .then((res) => {
       return res;
     });
-  console.log(result);
+  // console.log(result);
   res.send(result);
 });
 
